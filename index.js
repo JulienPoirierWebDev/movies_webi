@@ -1,12 +1,34 @@
 import express from 'express';
-import path from 'node:path';
-
-import geoip from 'geoip-lite';
-
-import fs from 'node:fs';
-import { nextTick } from 'node:process';
+import EventEmitter from 'node:events';
 
 import moviesRouter from './routes/moviesRouter.js';
+import MoviesModel from './models/moviesModel.js';
+
+import 'dotenv/config';
+
+
+const movieEventEmitter = new EventEmitter();
+
+movieEventEmitter.on('error', (error) => {
+	console.error("Erreur globale de l'EventEmitter :", error);
+});
+
+// Gestionnaire pour traiter une liste complète de films
+movieEventEmitter.on('saveMovies', async (movies) => {
+	for (const movie of movies) {
+		try {
+			const result = await MoviesModel.createOne(movie);
+			console.log('Film traité :', movie.title, result);
+		} catch (error) {
+			console.error(
+				'Erreur lors de la sauvegarde du film',
+				movie.title,
+				error
+			);
+		}
+	}
+	console.log('Tous les films ont été traités.');
+});
 
 const app = express();
 
@@ -17,62 +39,52 @@ app.use(express.urlencoded({ extended: true }));
 app.use(express.static('public'));
 
 app.use((req, res, next) => {
-	console.log('je suis un middleware');
 	totalRequest++;
-	console.log(totalRequest);
 	next();
 });
-
-app.use('/movies', moviesRouter);
 
 app.get('/', (request, response) => {
 	response.status(200).json({ message: 'Vous nous avez contacté :)' });
 });
 
-app.get('/hello-world', (request, response) => {
-	response.status(200).json({ message: 'Hello :)' });
-});
+app.get('/query-movies/:query', async (request, response) => {
+	try {
+		const { query } = request.params;
+		const { page } = request.query;
+		const pageForTMDB = page || 1;
 
-app.get('/geo', (request, response) => {
-	console.log(request);
+		const url = `https://api.themoviedb.org/3/search/movie?query=${query}&include_adult=false&language=fr-FR&page=${pageForTMDB}`;
+		const options = {
+			method: 'GET',
+			headers: {
+				accept: 'application/json',
+				Authorization: `Bearer ${process.env.TMDB_API_KEY}`,
+			},
+		};
 
-	var ip = '78.192.31.18'; //request.headers['x-forwarded-for'] || request.socket.remoteAddress
+		const responseFromTMDB = await fetch(url, options);
 
-	const localisation = geoip.lookup(ip);
-	response.json({ ip, localisation });
-});
-
-app.get('/superheroes/random', (req, res) => {
-	fs.readFile('superheroes.json', 'utf8', (err, data) => {
-		if (err) {
-			console.error(err);
-			return;
+		if (!responseFromTMDB.ok) {
+			throw new Error(
+				`Erreur de TMDB : ${responseFromTMDB.status} ${responseFromTMDB.statusText}`
+			);
 		}
 
-		const cleanData = JSON.parse(data);
+		const data = await responseFromTMDB.json();
 
-		const length = cleanData.length;
+		// Émettre un événement avec la liste complète des films
+		movieEventEmitter.emit('saveMovies', data.results);
 
-		const random = Math.round(Math.random() * length);
-
-		const randomSuperHeroes = cleanData[random];
-
-		console.log(length, random, randomSuperHeroes);
-		res.status(200).json({ hero: randomSuperHeroes });
-	});
+		response
+			.status(200)
+			.json({ message: `Vous avez cherché le film ${query}`, data });
+	} catch (error) {
+		console.error('Erreur dans la route /query-movies:', error);
+		response.status(500).json({ error: 'Erreur interne du serveur' });
+	}
 });
 
-app.put('/hello', (req, res) => {
-	res.send('Je suis une réponse à une requête PUT');
-});
-
-app.patch('/hello', (req, res) => {
-	res.send('Je suis une réponse à une requête PATCH');
-});
-
-app.delete('/hello', (req, res) => {
-	res.send('Je suis une réponse à une requête DELETE');
-});
+app.use('/movies', moviesRouter);
 
 app.use((req, res) => {
 	res.status(404).json({ error: true, message: 404 });

@@ -10,10 +10,16 @@ import {
 
 const router = express.Router();
 
+//   route /movies
+
+
+//  route /movies/
 router.get('/', getAllMovies);
 
+//  route /movies/:id
 router.get('/:id/', getOneById);
 
+//  route /movies/
 router.post('/', authMiddleware, createOne);
 
 router.patch('/', patchOneById);
