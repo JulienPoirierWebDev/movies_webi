@@ -23,56 +23,12 @@ app.use((req, res, next) => {
 	next();
 });
 
-app.use('/movies', moviesRouter);
-
 app.get('/', (request, response) => {
 	response.status(200).json({ message: 'Vous nous avez contacté :)' });
 });
 
-app.get('/hello-world', (request, response) => {
-	response.status(200).json({ message: 'Hello :)' });
-});
+app.use('/movies', moviesRouter);
 
-app.get('/geo', (request, response) => {
-	console.log(request);
-
-	var ip = '78.192.31.18'; //request.headers['x-forwarded-for'] || request.socket.remoteAddress
-
-	const localisation = geoip.lookup(ip);
-	response.json({ ip, localisation });
-});
-
-app.get('/superheroes/random', (req, res) => {
-	fs.readFile('superheroes.json', 'utf8', (err, data) => {
-		if (err) {
-			console.error(err);
-			return;
-		}
-
-		const cleanData = JSON.parse(data);
-
-		const length = cleanData.length;
-
-		const random = Math.round(Math.random() * length);
-
-		const randomSuperHeroes = cleanData[random];
-
-		console.log(length, random, randomSuperHeroes);
-		res.status(200).json({ hero: randomSuperHeroes });
-	});
-});
-
-app.put('/hello', (req, res) => {
-	res.send('Je suis une réponse à une requête PUT');
-});
-
-app.patch('/hello', (req, res) => {
-	res.send('Je suis une réponse à une requête PATCH');
-});
-
-app.delete('/hello', (req, res) => {
-	res.send('Je suis une réponse à une requête DELETE');
-});
 
 app.use((req, res) => {
 	res.status(404).json({ error: true, message: 404 });

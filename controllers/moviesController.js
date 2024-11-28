@@ -1,19 +1,16 @@
-import fs from 'node:fs';
+import MoviesModel from '../models/moviesModel.js';
 
-const getAllMovies = (req, res) => {
-	fs.readFile('movies.json', 'utf8', (err, data) => {
-		if (err) {
-			console.error(err);
-			return;
-		}
-
+const getAllMovies = async (req, res) => {
+	try {
+		const data = await MoviesModel.getAllMovies();
 		const cleanData = JSON.parse(data);
-
 		res.status(200).json({ movies: cleanData });
-	});
+	} catch (error) {
+		console.log(error);
+	}
 };
 
-const getOneById = (req, res) => {
+const getOneById = async (req, res) => {
 	const targetId = Number(req.params.id);
 
 	if (isNaN(targetId)) {
@@ -22,63 +19,36 @@ const getOneById = (req, res) => {
 			message: "Cet id n'est pas valide",
 		});
 	} else {
-		fs.readFile('movies.json', 'utf8', (err, data) => {
-			if (err) {
-				console.error(err);
-				return;
-			}
-
-			const cleanData = JSON.parse(data);
-
-			const movie = cleanData.filter((oneMovie) => {
-				if (oneMovie.id === targetId) {
-					return oneMovie;
-				}
-			})[0];
-
-			if (!movie) {
-				res.status(404).json({
-					error: true,
-					message: 'Pas de film avec cet ID',
-				});
-			} else {
-				res.status(200).json({ movie });
-			}
-		});
-	}
-};
-
-const createOne = (req, res) => {
-	fs.readFile('movies.json', 'utf8', (err, data) => {
-		if (err) {
-			console.error(err);
-			return;
-		}
+		const data = await MoviesModel.getOneById();
 
 		const cleanData = JSON.parse(data);
 
-		const length = cleanData.length;
-
-		const lastElement = cleanData[length - 1];
-
-		const lastId = lastElement.id;
-
-		const newId = lastId + 1;
-
-		const newMovie = { ...req.body.movie, id: newId };
-
-		const allMovies = [...cleanData, newMovie];
-
-		fs.writeFile('movies.json', JSON.stringify(allMovies), (err) => {
-			if (err) {
-				res.status(500).json({
-					error: true,
-					message: "Le serveur n'a pas réussi a sauvegarder ce film ",
-				});
+		const movie = cleanData.filter((oneMovie) => {
+			if (oneMovie.id === targetId) {
+				return oneMovie;
 			}
-			res.status(201).json(newMovie);
-		});
-	});
+		})[0];
+
+		if (!movie) {
+			res.status(404).json({
+				error: true,
+				message: 'Pas de film avec cet ID',
+			});
+		} else {
+			res.status(200).json({ movie });
+		}
+	}
+};
+
+const createOne = async (req, res) => {
+	try {
+		const newMovie = req.body;
+
+		const data = await MoviesModel.createOne(newMovie);
+		res.status(201).json({ message: 'Film ajouté' });
+	} catch (error) {
+		res.status(500).json({ error: true, message: error.message });
+	}
 };
 
 const patchOneById = (req, res) => {
