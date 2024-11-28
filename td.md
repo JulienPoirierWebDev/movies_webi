@@ -50,7 +50,7 @@ Cela peut faire peur et vous êtes en train de vous demander comment vous allez 
 
 ## Etape 1 - Mise en place (temps estimé : 5 a 20min)
 
-Nous avons déja notre fichier `movies.json` qui contient les films. Nous allons créer un fichier `lists.js` qui contiendra les listes de films. Nous allons commencer par créer un tableau vide `lists` dans ce fichier.
+Nous avons déja notre fichier `movies.json` qui contient les films. Nous allons créer un fichier `lists.json` qui contiendra les listes de films. Nous allons commencer par créer un tableau vide `lists` dans ce fichier.
 
 ```json
 []
