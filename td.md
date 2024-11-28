@@ -61,7 +61,7 @@ Nous avons déja notre fichier `movies.json` qui contient les films. Nous allons
 Nous allons créer les routes suivantes :
 
 -   Récupérer toutes les listes : `GET /lists`
--   Récupérer toutes les listes d'un utilisateur : `GET /lists/:idOwner`
+-   Récupérer toutes les listes d'un utilisateur : `GET /lists/users/:idOwner`
 -   Récupérer une liste par son id : `GET /lists/:id`
 -   Créer une liste : `POST /lists`
 -   Supprimer une liste : `DELETE /lists/:id`
