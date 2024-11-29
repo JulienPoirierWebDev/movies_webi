@@ -57,7 +57,7 @@ class MoviesModel {
 			if (isMovieWithSameIdTMDB) {
 				return 'Ce film existe déjà';
 			} else {
-				const movieIsMongoose = new Movies(newMovie);
+				const movieInMongoose = new Movies(newMovie);
 				movieIsMongoose.save();
 				return 'Film ajouté avec succès';
 			}

@@ -2,6 +2,7 @@ import express from 'express';
 import EventEmitter from 'node:events';
 
 import moviesRouter from './routes/moviesRouter.js';
+import usersRouter from './routes/usersRouter.js';
 
 import 'dotenv/config';
 
@@ -106,6 +107,7 @@ app.get('/query-movies/:query', async (request, response) => {
 });
 
 app.use('/movies', moviesRouter);
+app.use('/users', usersRouter);
 
 app.use((req, res) => {
 	res.status(404).json({ error: true, message: 404 });
