@@ -6,9 +6,72 @@ import MoviesModel from './models/moviesModel.js';
 
 import 'dotenv/config';
 
-import connectDB from 'connectDB';
+import { connectDB } from './services/db.js';
+import mongoose, { Schema } from 'mongoose';
 
-import mongoose from 'mongoose';
+connectDB();
+
+/*
+
+		"adult": false,
+		"backdrop_path": "/x4FMr3LDjTnlViUXJWayr53FvV5.jpg",
+		"genre_ids": [99],
+		"id": 1218207,
+		"original_language": "en",
+		"original_title": "The Making of Chicken Run: Dawn of the Nugget",
+		"overview": "Silence, moteur... chapon ! Découvrez les coulisses de cette brillante suite en stop-motion avec l'équipe du studio Aardman et le réalisateur Sam Fell.",
+		"popularity": 5.117,
+		"poster_path": "/710ij25JSDJ4sPg4eN5gq99v4sj.jpg",
+		"release_date": "2023-12-15",
+		"title": "Chicken Run : La menace nuggets – Le making-of",
+		"video": false,
+		"vote_average": 6.077,
+		"vote_count": 13
+ */
+
+const MovieSchema = Schema({
+	adult: Boolean,
+	backdrop_path: String,
+	genre_ids: [Number],
+	id: Number,
+	original_language: String,
+	original_title: {
+		type: String,
+		required: true,
+	},
+	overview: String,
+	popularity: Number,
+	poster_path: String,
+	release_date: String,
+	title: String,
+	video: Boolean,
+	vote_average: Number,
+	vote_count: Number,
+});
+
+const Movies = mongoose.model('Movies', MovieSchema);
+
+const terminator = new Movies({
+	adult: false,
+	backdrop_path: '/x4FMr3LDjTnlViUXJWayr53FvV5.jpg',
+	genre_ids: [99],
+	id: 1218207,
+	original_language: 'en',
+	original_title: 'The Making of Chicken Run: Dawn of the Nugget',
+	overview:
+		"Silence, moteur... chapon ! Découvrez les coulisses de cette brillante suite en stop-motion avec l'équipe du studio Aardman et le réalisateur Sam Fell.",
+	popularity: 5.117,
+	poster_path: '/710ij25JSDJ4sPg4eN5gq99v4sj.jpg',
+	release_date: '2023-12-15',
+	title: 'Chicken Run : La menace nuggets – Le making-of',
+	video: false,
+	vote_average: 6.077,
+	vote_count: 13,
+});
+
+console.log(terminator);
+
+terminator.save();
 
 const movieEventEmitter = new EventEmitter();
 
