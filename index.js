@@ -7,6 +7,8 @@ import 'dotenv/config';
 
 import { connectDB } from './services/db.js';
 
+import MoviesModel from './models/moviesModel.js';
+
 connectDB();
 
 /*
