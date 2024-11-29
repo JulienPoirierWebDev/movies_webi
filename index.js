@@ -6,6 +6,9 @@ import MoviesModel from './models/moviesModel.js';
 
 import 'dotenv/config';
 
+import connectDB from './services/db.js';
+
+connectDB();
 
 const movieEventEmitter = new EventEmitter();
 
@@ -13,7 +16,6 @@ movieEventEmitter.on('error', (error) => {
 	console.error("Erreur globale de l'EventEmitter :", error);
 });
 
-// Gestionnaire pour traiter une liste complète de films
 movieEventEmitter.on('saveMovies', async (movies) => {
 	for (const movie of movies) {
 		try {
