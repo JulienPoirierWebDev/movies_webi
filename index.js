@@ -6,9 +6,9 @@ import MoviesModel from './models/moviesModel.js';
 
 import 'dotenv/config';
 
-import connectDB from './services/db.js';
+import connectDB from 'connectDB';
 
-connectDB();
+import mongoose from 'mongoose';
 
 const movieEventEmitter = new EventEmitter();
 
