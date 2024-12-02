@@ -11,25 +11,3 @@ usersRouter.put('/:id', UsersController.updateOneById);
 usersRouter.delete('/:id', UsersController.deleteOneById);
 
 export default usersRouter;
-
-// POST monsite.com/users/
-// {
-// 	"firstname": "John",
-// 	"lastname": "Doe",
-// 	"birthdate": "1990-01-01",
-// 	"email": 'monmail@mail.com',
-// 	"password": "password"
-// }
-
-/*
-
-POST monsite.com/users/
-{
-    "firstname": "John",
-    "lastname": "Doe",
-    "birthdate": "1990-01-01",
-    "email": 'monmail@mail.com',
-    "password": "password"
-}
-
-*/

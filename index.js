@@ -3,6 +3,7 @@ import EventEmitter from 'node:events';
 
 import moviesRouter from './routes/moviesRouter.js';
 import usersRouter from './routes/usersRouter.js';
+import securityRouter from './routes/securityRouter.js';
 
 import 'dotenv/config';
 
@@ -65,6 +66,11 @@ app.use((req, res, next) => {
 	next();
 });
 
+app.use((req, res, next) => {
+	//console.log(req);
+	next();
+});
+
 app.get('/', (request, response) => {
 	response.status(200).json({ message: 'Vous nous avez contacté :)' });
 });
@@ -108,6 +114,7 @@ app.get('/query-movies/:query', async (request, response) => {
 
 app.use('/movies', moviesRouter);
 app.use('/users', usersRouter);
+app.use('/security', securityRouter);
 
 app.use((req, res) => {
 	res.status(404).json({ error: true, message: 404 });

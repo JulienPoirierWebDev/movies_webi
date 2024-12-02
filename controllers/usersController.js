@@ -15,12 +15,28 @@ class UsersController {
 	}
 
 	static async createOne(req, res) {
-		const newUser = req.body;
-		const hashedPassword = await bycrypt.hash(newUser.password, 10);
-		newUser.hashedPassword = hashedPassword;
-		//delete newUser.password;
-		const message = await UsersModel.createOne(newUser);
-		res.status(201).json(message);
+		try {
+			const newUser = req.body;
+			// faire les vérif que l'on veut
+			const isUserWithEmail = await UsersModel.getOneByEmail(
+				req.body.email
+			);
+
+			if (isUserWithEmail) {
+				res.status(404).json({
+					error: true,
+					message: 'Cet email est déja utilisé',
+				});
+			} else {
+				const hashedPassword = await bycrypt.hash(newUser.password, 10);
+				newUser.hashedPassword = hashedPassword;
+				delete newUser.password;
+				const message = await UsersModel.createOne(newUser);
+				res.status(201).json(message);
+			}
+		} catch (error) {
+			console.log('error in usersController createOne');
+		}
 	}
 
 	static async updateOneById(req, res) {

@@ -16,11 +16,14 @@ const UserSchema = Schema(
 		email: {
 			type: String,
 			required: true,
-			unique: [true, 'Cet email est déja utilisé'],
 		},
 		hashedPassword: {
 			type: String,
 			required: true,
+		},
+		role: {
+			type: String,
+			default: 'user',
 		},
 	},
 	{ timestamps: true }
@@ -37,15 +40,21 @@ class UsersModel {
 		const user = await Users.findById(_id);
 		return user;
 	}
+	static async getOneByEmail(targetEmail) {
+		try {
+			const user = await Users.findOne({ email: targetEmail });
+
+			return user;
+		} catch (error) {
+			console.log(error);
+		}
+	}
 	static async createOne(newUser) {
 		try {
 			const user = new Users(newUser);
 			user.save();
 			return 'Utilisateur crée avec succès';
 		} catch (error) {
-			if (error.code === 11000 && error.keyPattern?.email) {
-				return 'Cet email est déjà utilisé';
-			}
 			console.error(error);
 		}
 	}
