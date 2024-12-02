@@ -1,5 +1,6 @@
 import UsersModel from '../models/usersModel.js';
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 
 class SecurityController {
 	static async authenticate(req, res) {
@@ -24,8 +25,19 @@ class SecurityController {
 						"Il y a un problème avec le mot de passe / l'email",
 				});
 			} else {
+				const token = jwt.sign(
+					{
+						_id: user.id,
+					},
+					process.env.SECRET_JWT,
+					{
+						expiresIn: '2h',
+					}
+				);
+
 				res.status(200).json({
 					message: "C'est bien vous !",
+					token: token,
 				});
 			}
 		}
