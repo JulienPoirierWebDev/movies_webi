@@ -7,10 +7,11 @@ import {
 	getOneById,
 	patchOneById,
 } from '../controllers/moviesController.js';
+import adminAuthMiddleware from '../middlewares/authorization/adminAuthMiddleware.js';
 
 const router = express.Router();
 
-router.get('/', getAllMovies);
+router.get('/', authMiddleware, adminAuthMiddleware, getAllMovies);
 
 router.get('/:id/', getOneById);
 

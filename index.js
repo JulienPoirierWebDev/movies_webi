@@ -5,11 +5,15 @@ import moviesRouter from './routes/moviesRouter.js';
 import usersRouter from './routes/usersRouter.js';
 import securityRouter from './routes/securityRouter.js';
 
+import jwt from 'jsonwebtoken';
+
 import 'dotenv/config';
 
 import { connectDB } from './services/db.js';
 
 import MoviesModel from './models/moviesModel.js';
+import authMiddleware from './middlewares/authMiddleware.js';
+import adminAuthorizationMiddleware from './middlewares/authorization/adminAuthMiddleware.js';
 
 connectDB();
 
@@ -72,7 +76,13 @@ app.use((req, res, next) => {
 });
 
 app.get('/', (request, response) => {
-	response.status(200).json({ message: 'Vous nous avez contacté :)' });
+	try {
+		response.status(200).json({ message: 'Vous nous avez contacté :)' });
+	} catch (error) {}
+});
+
+app.get('/test', authMiddleware, adminAuthorizationMiddleware, (req, res) => {
+	res.json({ blabla: 'blabla' });
 });
 
 app.get('/query-movies/:query', async (request, response) => {

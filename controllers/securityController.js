@@ -28,6 +28,7 @@ class SecurityController {
 				const token = jwt.sign(
 					{
 						_id: user.id,
+						role: user.role,
 					},
 					process.env.SECRET_JWT,
 					{

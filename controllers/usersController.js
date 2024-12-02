@@ -31,6 +31,7 @@ class UsersController {
 				const hashedPassword = await bycrypt.hash(newUser.password, 10);
 				newUser.hashedPassword = hashedPassword;
 				delete newUser.password;
+				newUser.role = 'user';
 				const message = await UsersModel.createOne(newUser);
 				res.status(201).json(message);
 			}

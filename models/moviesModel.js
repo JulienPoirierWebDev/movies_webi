@@ -45,7 +45,7 @@ class MoviesModel {
 				return 'Ce film existe déjà';
 			} else {
 				const movieInMongoose = new Movies(newMovie);
-				movieIsMongoose.save();
+				movieInMongoose.save();
 				return 'Film ajouté avec succès';
 			}
 		} catch (error) {
