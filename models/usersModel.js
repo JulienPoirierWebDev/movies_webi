@@ -1,4 +1,5 @@
 import mongoose, { Schema } from 'mongoose';
+import { ListSchema } from './listsModel.js';
 const UserSchema = Schema(
 	{
 		lastname: {
@@ -25,6 +26,7 @@ const UserSchema = Schema(
 			type: String,
 			default: 'user',
 		},
+		lists: [{ type: ListSchema }],
 	},
 	{ timestamps: true }
 );
@@ -77,3 +79,4 @@ class UsersModel {
 }
 
 export default UsersModel;
+export { UserSchema };

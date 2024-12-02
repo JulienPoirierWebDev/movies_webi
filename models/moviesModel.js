@@ -69,3 +69,5 @@ class MoviesModel {
 }
 
 export default MoviesModel;
+
+export { MovieSchema };
