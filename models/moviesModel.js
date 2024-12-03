@@ -8,7 +8,6 @@ const MovieSchema = Schema({
 	original_language: String,
 	original_title: {
 		type: String,
-		required: true,
 	},
 	overview: String,
 	popularity: Number,

@@ -11,7 +11,7 @@ router.post('/', ListsController.createOne);
 
 router.patch('/:id', ListsController.updateOneById);
 
-router.post('/:id/movies/:id_movie', ListsController.addMovieToList);
+router.post('/:id/movies/', ListsController.addMovieToList);
 
 router.delete('/:id/movies/:id_movie', ListsController.removeMovieFromList);
 

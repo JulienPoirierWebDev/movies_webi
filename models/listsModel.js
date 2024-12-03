@@ -1,10 +1,15 @@
 import mongoose, { Schema } from 'mongoose';
 import { MovieSchema } from './moviesModel.js';
-import { UserSchema } from './usersModel.js';
+import Users from './usersModel.js';
 
 const ListSchema = Schema({
 	name: { type: String, required: true },
-	movies: [{ type: MovieSchema }],
+	movies: [
+		{
+			type: mongoose.Schema.Types.ObjectId,
+			ref: 'Movies',
+		},
+	],
 	owner: {
 		type: mongoose.Schema.Types.ObjectId,
 		ref: 'Users',
@@ -16,22 +21,33 @@ const Lists = mongoose.model('Lists', ListSchema);
 
 class ListsModel {
 	static async getOneById(_id) {
-		const list = await Lists.findById();
-		return list;
+		try {
+			const list = await Lists.findById(_id).populate('movies').exec();
+			return list;
+		} catch (error) {
+			console.log(error);
+		}
 	}
 
 	static async getAllListsByUserId(userId) {
-		const lists = await Lists.find({ 'owner._id': userId });
-		return lists;
+		try {
+			const user = await Users.getOneById(userId);
+
+			const lists = await Lists.find({ owner: user._id });
+			return lists;
+		} catch (error) {
+			return;
+		}
 	}
 
 	static async createOne(newList) {
 		try {
 			const list = new Lists(newList);
-			list.save();
-			return 'Liste créée avec succès';
+			console.log(list);
+			await list.save();
+			return list;
 		} catch (error) {
-			console.error(error);
+			throw new Error('Erreur lors de la création de la liste');
 		}
 	}
 
@@ -47,6 +63,12 @@ class ListsModel {
 	static async addMovieToList(listId, movie) {
 		try {
 			const list = await Lists.findById(listId);
+			console.log(list);
+
+			if (list.movies === undefined) {
+				list.movies = [];
+			}
+
 			list.movies.push(movie);
 			list.save();
 			return 'Film ajouté à la liste';

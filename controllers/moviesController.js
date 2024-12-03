@@ -1,4 +1,5 @@
 import MoviesModel from '../models/moviesModel.js';
+import mongoose from 'mongoose';
 
 const getAllMovies = async (req, res) => {
 	try {

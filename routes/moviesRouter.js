@@ -11,7 +11,7 @@ import adminAuthMiddleware from '../middlewares/authorization/adminAuthMiddlewar
 
 const router = express.Router();
 
-router.get('/', authMiddleware, adminAuthMiddleware, getAllMovies);
+router.get('/', authMiddleware, getAllMovies);
 
 router.get('/:id/', getOneById);
 
