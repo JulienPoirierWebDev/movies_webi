@@ -5,6 +5,19 @@ import bycrypt from 'bcrypt';
 import UsersModel from '../models/usersModel.js';
 
 class UsersController {
+	static async getAll(req, res) {
+		try {
+			const users = await UsersModel.getAll();
+
+			if (users.length === 0) {
+				res.status(404).json('Aucun utilisateur trouvé');
+			}
+			res.status(200).json(users);
+		} catch (error) {
+			res.status(500).json('Erreur serveur');
+		}
+	}
+
 	static async getOneById(req, res) {
 		const user = await UsersModel.getOneById(req.params.id);
 		if (user) {

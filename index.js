@@ -1,6 +1,8 @@
 import express from 'express';
 import EventEmitter from 'node:events';
 
+import cors from 'cors';
+
 import moviesRouter from './routes/moviesRouter.js';
 import usersRouter from './routes/usersRouter.js';
 import securityRouter from './routes/securityRouter.js';
@@ -11,10 +13,11 @@ import 'dotenv/config';
 import { connectDB } from './services/db.js';
 
 import MoviesModel from './models/moviesModel.js';
-import authMiddleware from './middlewares/authMiddleware.js';
+import authenticationMiddleware from './middlewares/authenticationMiddleware.js';
 import adminAuthorizationMiddleware from './middlewares/authorization/adminAuthMiddleware.js';
 
 connectDB();
+const PORT = process.env.PORT || 3000;
 
 const movieEventEmitter = new EventEmitter();
 
@@ -40,6 +43,12 @@ movieEventEmitter.on('saveMovies', async (movies) => {
 
 const app = express();
 
+app.use(
+	cors({
+		origin: 'http://localhost:5173',
+		credentials: true,
+	})
+);
 let totalRequest = 0;
 
 app.use(express.json());
@@ -51,16 +60,20 @@ app.use((req, res, next) => {
 	next();
 });
 
-
 app.get('/', (request, response) => {
 	try {
 		response.status(200).json({ message: 'Vous nous avez contacté :)' });
 	} catch (error) {}
 });
 
-app.get('/test', authMiddleware, adminAuthorizationMiddleware, (req, res) => {
-	res.json({ blabla: 'blabla' });
-});
+app.get(
+	'/test',
+	authenticationMiddleware,
+	adminAuthorizationMiddleware,
+	(req, res) => {
+		res.json({ blabla: 'blabla' });
+	}
+);
 
 app.get('/query-movies/:query', async (request, response) => {
 	try {
@@ -108,6 +121,6 @@ app.use((req, res) => {
 	res.status(404).json({ error: true, message: 404 });
 });
 
-app.listen(3000, () => {
-	console.log('server running : port 3000');
+app.listen(PORT, () => {
+	console.log(`server running : port ${PORT}`);
 });

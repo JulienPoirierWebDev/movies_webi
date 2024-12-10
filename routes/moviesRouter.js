@@ -1,5 +1,5 @@
 import express from 'express';
-import authMiddleware from '../middlewares/authMiddleware.js';
+import authenticationMiddleware from '../middlewares/authenticationMiddleware.js';
 import {
 	createOne,
 	deleteOneById,
@@ -11,11 +11,11 @@ import adminAuthMiddleware from '../middlewares/authorization/adminAuthMiddlewar
 
 const router = express.Router();
 
-router.get('/', authMiddleware, getAllMovies);
+router.get('/', authenticationMiddleware, getAllMovies);
 
 router.get('/:id/', getOneById);
 
-router.post('/', authMiddleware, createOne);
+router.post('/', authenticationMiddleware, createOne);
 
 router.patch('/', patchOneById);
 

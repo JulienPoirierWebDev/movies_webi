@@ -38,6 +38,11 @@ UserSchema.virtual('fullname').get(() => {
 const Users = mongoose.model('Users', UserSchema);
 
 class UsersModel {
+	static async getAll() {
+		const users = await Users.find();
+		return users;
+	}
+
 	static async getOneById(_id) {
 		const user = await Users.findById(_id);
 		return user;
